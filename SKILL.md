@@ -19,6 +19,20 @@ Core principle:
 
 Optimize for finding what everyone forgot to ask.
 
+## Supporting references
+
+Use the supporting references progressively. Do not load or apply them as static checklists.
+
+- `references/reasoning-framework.md` — core reasoning model. Read first when performing a deep analysis.
+- `references/requirement-expansion.md` — how to expand finite requirements without inventing product rules.
+- `references/risk-analysis.md` — risk prioritization and concentration.
+- `references/regression-analysis.md` — diff/repository-aware regression reasoning.
+- `references/architecture-quality.md` — Clean Code, SOLID, maintainability, and architecture review without dogma.
+- `references/test-plan-generation.md` — how to compose the final developer-facing artifact.
+- `templates/test-plan.md` — reusable output skeleton.
+
+Examples under `examples/` are calibration material, not scenarios to copy mechanically.
+
 ## Non-negotiable rules
 
 1. Do not treat the supplied acceptance-criteria checklist as exhaustive.
@@ -102,6 +116,8 @@ If a diff is available, distinguish:
 - shared behavior touched indirectly;
 - potential regression surface outside the story.
 
+Use `references/reasoning-framework.md` to construct the evidence map and change model.
+
 ### Phase 3 — Build a change model
 
 Create a concise internal model of the feature/change before generating scenarios.
@@ -125,6 +141,8 @@ The model must adapt to the change.
 An ETL, report generator, financial calculation bug, UI workflow, Kafka consumer, migration, batch job, cache change, and API endpoint should NOT receive the same generic plan.
 
 ### Phase 4 — Expand the requirement space
+
+Use `references/requirement-expansion.md`.
 
 For every explicit acceptance criterion, ask:
 
@@ -158,7 +176,9 @@ Ask:
 
 > What is the strangest plausible production condition that remains consistent with this system?
 
-Explore meaningful interactions, especially when relevant:
+Explore meaningful interactions only when they create a new failure mechanism.
+
+Examples:
 
 - retry + timeout;
 - concurrency + uniqueness;
@@ -177,50 +197,31 @@ These are examples of reasoning patterns, not mandatory cases.
 
 ### Phase 6 — Regression analysis
 
+Use `references/regression-analysis.md`.
+
 Do not limit analysis to the story's named behavior.
 
-Determine what existing behavior could be affected by:
+Generate regression criteria only when there is a credible impact path from changed code/config/contracts to existing behavior.
 
-- modified shared functions;
-- shared models or schemas;
-- changed queries;
-- changed serialization;
-- changed date/number handling;
-- changed infrastructure/configuration;
-- dependency upgrades;
-- altered contracts;
-- new side effects;
-- refactoring;
-- changed defaults.
+### Phase 7 — Risk analysis
 
-Generate regression criteria when there is a credible impact path.
+Use `references/risk-analysis.md` to identify which scenarios deserve the most attention.
 
-### Phase 7 — Engineering quality review
+Do not rank merely by ease of testing. Consider impact, likelihood, detectability, recoverability, and blast radius.
+
+### Phase 8 — Engineering quality review
+
+Use `references/architecture-quality.md`.
 
 Keep this separate from the Test Plan's behavioral criteria.
 
 Review only against the actual architecture and conventions of the project. Do not force Clean Architecture or unnecessary abstractions onto a system that does not use them.
 
-Evaluate relevant concerns such as:
-
-- separation of responsibilities;
-- business logic placement;
-- dependency direction;
-- coupling/cohesion;
-- testability;
-- unnecessary abstractions;
-- duplicated logic;
-- complexity;
-- naming and readability;
-- error handling;
-- maintainability;
-- SOLID principles where applicable;
-- consistency with existing architecture;
-- technical debt introduced by the change.
-
 Explain concrete evidence instead of outputting meaningless statements such as `SOLID: PASS`.
 
-### Phase 8 — Produce the Test Plan
+### Phase 9 — Produce the Test Plan
+
+Use `references/test-plan-generation.md` and `templates/test-plan.md`.
 
 The output must distinguish original criteria from newly derived criteria.
 
@@ -258,7 +259,7 @@ Why this matters:
 Why this case exists and what assumption/risk it targets.
 
 Expected behavior:
-Known expected result, derived invariant, or `Requires clarification` when the specification does not define it.
+Known expected result, derived invariant, `Requires clarification`, or `Risk exploration — no product behavior asserted`.
 
 Evidence:
 Requirement, code path, schema, dependency, diff, existing behavior, or reasoning that supports including the case.
@@ -328,29 +329,6 @@ Examples include:
 - manual exploratory validation.
 
 Do not default everything to E2E.
-
-## Output structure
-
-Produce the final artifact using this structure, adapting sections to the actual change:
-
-```markdown
-# Deep Test Plan
-
-## 1. Change understanding
-## 2. Evidence inspected
-## 3. Original acceptance criteria
-## 4. Change/system model
-## 5. Derived validation criteria
-## 6. Regression surface
-## 7. Ambiguities and decisions required
-## 8. Suggested automated test strategy
-## 9. Manual/exploratory validation candidates
-## 10. Engineering quality review
-## 11. Highest-risk areas
-## 12. Coverage notes
-```
-
-Omit irrelevant sections rather than filling them with generic content.
 
 ## Final behavior
 
